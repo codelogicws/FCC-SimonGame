@@ -26,14 +26,27 @@ let comboMemory:BUTTONCOLOR[] = [];
 let userIndex:number = 0;
 let playbackID:number;
 let userTurn:boolean = false;
+let strictMode:boolean = false;
 
 function gameStart(){
-  newColor()
-  playColors()
-
-  console.log(userIndex);
+  //make sure we our adding a color after users turn
+  computersTurnNewColor()
 }
 
+function computersTurnNewColor(){
+  newColor()
+  computersTurn()
+}
+
+function computersTurn(){
+  userTurn = false;
+  userIndex = 0;
+  playColors();
+}
+
+function gameOver(){
+  return comboMemory.length > 20
+}
 
 function getCombo(){
   return comboMemory
@@ -41,6 +54,7 @@ function getCombo(){
 
 function newColor(){
    let random:number = Math.floor(   Math.random() * (4 - 0) + 0)
+   console.log(random + ' this is the random number');
    comboMemory.push(random)
 }
 
@@ -59,7 +73,7 @@ function playNextNumber(){
 }
 
 function switchTurn(){
-  return userIndex >= comboMemory.length - 1;
+  return userIndex >= comboMemory.length;
 }
 
 function pressColor(color:BUTTONCOLOR){
@@ -67,25 +81,35 @@ function pressColor(color:BUTTONCOLOR){
     if(color == comboMemory[userIndex]){ //Just finished this logic Friday 9:48PM
       //The user can now make a correct move.
       userIndex++;
-      checkIfDone()
+      checkIfTurn()
     }else{
       loseGame();
     }
   }
 }
 
-function checkIfDone(){
-  if(switchTurn){
-    alert("you are done for now");
+function checkIfTurn(){
+
+  if(switchTurn()){
+
+    if (userIndex == 20){
+      alert("Good Job! You Win!")
+    } else{
+      alert("your turn is over")
+      computersTurnNewColor()
+    }
   }
 }
 
 function loseGame(){
-  alert("You lose!")
-  //prompt for reset
-}
-function winGme(){
-  //win conditions
+  if(strictMode){
+    alert('Game Over You Lose')
+    comboMemory = []
+    computersTurnNewColor()
+  }else{
+    alert('retry');
+    computersTurn()
+  }
 }
 
 enum BUTTONCOLOR{
