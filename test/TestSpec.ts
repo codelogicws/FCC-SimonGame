@@ -29,4 +29,8 @@ describe('Game Core', () => {
     })
   })
 
-});
+  it('console out the colors in time', ()=>{
+    simon.playColors();
+  })
+
+})
