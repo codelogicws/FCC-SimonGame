@@ -64,13 +64,12 @@ function switchTurn(){
 
 function pressColor(color:BUTTONCOLOR){
   if(userTurn){
-    debugger;
-    if(color == comboMemory[userIndex]){
-      debugger;
+    if(color == comboMemory[userIndex]){ //Just finished this logic Friday 9:48PM
+      //The user can now make a correct move.
       userIndex++;
       checkIfDone()
     }else{
-      endGame();
+      loseGame();
     }
   }
 }
@@ -81,9 +80,12 @@ function checkIfDone(){
   }
 }
 
-function endGame(){
+function loseGame(){
   alert("You lose!")
-
+  //prompt for reset
+}
+function winGme(){
+  //win conditions
 }
 
 enum BUTTONCOLOR{
