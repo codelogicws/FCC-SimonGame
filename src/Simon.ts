@@ -1,35 +1,17 @@
 ///<reference path='../typings/browser/definitions/lodash/index.d.ts'/>
 
-// What todo
-/*
-- test if the button I pressed is right while keeping state on progress
-- play the combo of colors
-- change speed of combo playback
-- displaying colors as needed
-  - probably just using interval runs
-
-User Story: Each time I input a series of button presses correctly, I see the same series of button presses but with an additional step.
-
-User Story: I hear a sound that corresponds to each button both when the series of button presses plays, and when I personally press a button.
-
-User Story: If I press the wrong button, I am notified that I have done so, and that series of button presses starts again to remind me of the pattern so I can try again.
-
-User Story: I can see how many steps are in the current series of button presses.
-
-User Story: If I want to restart, I can hit a button to do so, and the game will return to a single step.
-
-User Story: I can play in strict mode where if I get a button press wrong, it notifies me that I have done so, and the game restarts at a new random series of button presses.
-
-User Story: I can win the game by getting a series of 20 steps correct. I am notified of my victory, then the game starts over.
-*/
 let comboMemory:BUTTONCOLOR[] = [];
 let userIndex:number = 0;
 let playbackID:number;
 let userTurn:boolean = false;
 let strictMode:boolean = false;
+let blueSound = new Audio("https://s3.amazonaws.com/freecodecamp/simonSound1.mp3");
+let greenSound = new Audio("https://s3.amazonaws.com/freecodecamp/simonSound2.mp3");
+let redSound = new Audio("https://s3.amazonaws.com/freecodecamp/simonSound3.mp3");
+let yellowSound = new Audio("https://s3.amazonaws.com/freecodecamp/simonSound4.mp3");
+let errorSound = new Audio('http://www.freesfx.co.uk/rx2/mp3s/9/11111_1393961399.mp3');
 
 function gameStart(){
-  //make sure we our adding a color after users turn
   computersTurnNewColor()
 }
 
@@ -63,13 +45,32 @@ function playColors(){
 }
 
 function playNextNumber(){
-  console.log(BUTTONCOLOR[comboMemory[userIndex++]]);
+  playColor(comboMemory[userIndex++])
   if (  switchTurn()  ){
-    //terminate
     clearInterval(playbackID);
     userTurn = true;
     userIndex = 0;
   }
+}
+
+function playColor(color:BUTTONCOLOR){
+  switch(color){
+    case BUTTONCOLOR.BLUE:
+         blueSound.play()
+         break;
+    case BUTTONCOLOR.GREEN:
+         greenSound.play()
+         break;
+    case BUTTONCOLOR.RED:
+         redSound.play()
+         break;
+    case BUTTONCOLOR.YELLOW:
+         yellowSound.play()
+         break;
+      default:
+       alert('ALL YOUR BASE ARE BELONG TO US!!!')
+    }
+  console.log(BUTTONCOLOR[color]);
 }
 
 function switchTurn(){
@@ -78,8 +79,7 @@ function switchTurn(){
 
 function pressColor(color:BUTTONCOLOR){
   if(userTurn){
-    if(color == comboMemory[userIndex]){ //Just finished this logic Friday 9:48PM
-      //The user can now make a correct move.
+    if(color == comboMemory[userIndex]){
       userIndex++;
       checkIfTurn()
     }else{
@@ -89,9 +89,7 @@ function pressColor(color:BUTTONCOLOR){
 }
 
 function checkIfTurn(){
-
   if(switchTurn()){
-
     if (userIndex == 20){
       alert("Good Job! You Win!")
     } else{
@@ -102,6 +100,7 @@ function checkIfTurn(){
 }
 
 function loseGame(){
+  errorSound.play();
   if(strictMode){
     alert('Game Over You Lose')
     comboMemory = []
