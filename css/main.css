@@ -1,4 +1,13 @@
-#gamedisplay{
-  width: 200;
-  height: 200;
+#myCanvas{
+  width: 100vmin;
+  height: 100vmin;
+  margin: 0px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+body{
+  padding: 0px;
+  margin: 0px;
 }
