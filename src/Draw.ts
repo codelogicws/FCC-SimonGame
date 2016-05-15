@@ -43,8 +43,8 @@ const PI1ANDHALF = Math.PI * 1.5
 const BUTTONGAP = 0.06
 const COLOROFF = 180
 const COLOROFFDARK = 90
-const COLORON = 230
-const COLORONDARK = 180
+const COLORON = 255
+const COLORONDARK = 200
 const blueConfig:ColorConfig = new ColorConfig(false, false, true);
 const redConfig:ColorConfig = new ColorConfig(true, false, false);
 const yellowConfig:ColorConfig = new ColorConfig(true, true, false);
@@ -69,6 +69,7 @@ function drawEverything(greenButtonOn:boolean, redButtonOn:boolean, blueButtonOn
   createButton(PI1ANDHALF, PI, greenConfig, greenButtonOn)
 
 
+  ctx.beginPath()
   ctx.fillStyle = "black"
   ctx.font = "100px Patua One";
   ctx.fillText("Simon", 370, 420)

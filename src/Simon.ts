@@ -1,4 +1,5 @@
 ///<reference path='../typings/browser/definitions/lodash/index.d.ts'/>
+///<reference path='../Draw.ts/>
 
 let comboMemory:BUTTONCOLOR[] = [];
 let userIndex:number = 0;
@@ -57,20 +58,31 @@ function playColor(color:BUTTONCOLOR){
   switch(color){
     case BUTTONCOLOR.BLUE:
          blueSound.play()
+         lightButton(0,0,1,0)
          break;
     case BUTTONCOLOR.GREEN:
          greenSound.play()
+         lightButton(1,0,0,0)
          break;
     case BUTTONCOLOR.RED:
          redSound.play()
+         lightButton(0,1,0,0)
          break;
     case BUTTONCOLOR.YELLOW:
          yellowSound.play()
+         lightButton(0,0,0,1)
          break;
       default:
        alert('ALL YOUR BASE ARE BELONG TO US!!!')
     }
   console.log(BUTTONCOLOR[color]);
+}
+
+function lightButton(g, r, b, y){
+  drawEverything(g, r, b ,y)
+  window.setTimeout(()=>{
+    drawEverything(0,0,0,0)
+  }, 350)
 }
 
 function switchTurn(){
