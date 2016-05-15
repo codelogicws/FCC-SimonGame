@@ -36,6 +36,47 @@ class ColorConfig{
 
 }
 
+
+class ButtonClickTester{
+  private cornerCutOff = 255
+  private xCutOff:number
+  private yCutOff:number
+  private fullEnd = c.width/2
+  private expectedX:number
+  private expectedY:number
+  private x:number
+  private y:number
+
+  public constructor(x:number, y:number, xFlip:boolean, yFlip:boolean){
+    this.x = x
+    this.y = y
+    this.expectedX = (y >= this.cornerCutOff)? this.fullEnd - (y-this.cornerCutOff) : this.fullEnd
+    this.expectedY = (x >= this.cornerCutOff)? this.fullEnd - (x-this.cornerCutOff) : this.fullEnd
+  }
+
+  public isButtonPressed(){
+    return (this.x < this.expectedX && this.y < this.expectedY)
+  }
+
+    // function isLightPressed(x:number, y:number, xFlip:boolean, yFlip:boolean){
+    //   let cornerCutOff = 225;
+    //   let xCutOff:number = (xFlip)? (c.width - cornerCutOff) : cornerCutOff
+    //   let yCutOff:number = (yFlip)? (c.height - cornerCutOff): cornerCutOff
+    //   let fullEnd:number = c.width/2
+    //   let exprectedX = (xFlip)? cornerExpectAxisFlipped(cornerCutOff, fullEnd, y): cornerExpectAxis(cornerCutOff, fullEnd, y)
+    //   let exprectedY = (xFlip)? cornerExpectAxisFlipped(cornerCutOff, fullEnd, x): cornerExpectAxis(cornerCutOff, fullEnd, x)
+    // }
+    //
+    // function cornerExpectAxis(cornerCutOff:number, fullLength:number, XorY:number){
+    //   return (XorY >= cornerCutOff)? fullLength - (XorY-cornerCutOff) : fullLength
+    // }
+    //
+    // //TODO Needs work
+    // function cornerExpectAxisFlipped(cornerCutOff:number, fullLength:number, XorY:number){
+    //   return (XorY >= cornerCutOff)? fullLength - (XorY-cornerCutOff) : fullLength
+    // }
+}
+
 const PI = Math.PI
 const PI2DIV = Math.PI/2
 const PI2 = Math.PI*2
@@ -53,16 +94,34 @@ const greenConfig:ColorConfig = new ColorConfig(false, true, false);
 
 var c = <HTMLCanvasElement> $('#myCanvas')[0]
 var ctx = c.getContext("2d")
+let elemLeft = c.offsetLeft
+let elemTop = c.offsetTop
 drawEverything(false, false, false, false);
+
+c.addEventListener('click', function(event) {
+    let x = 1000 * ((event.pageX-elemLeft)/c.offsetWidth)
+    let y = 1000 * ((event.pageY-elemTop)/c.offsetHeight)
+
+    let greenTester:ButtonClickTester = new ButtonClickTester(x, y, false, false);
+    let blueTester:ButtonClickTester = new ButtonClickTester(x, y, true, true);
+
+    if(greenTester.isButtonPressed()){
+      alert('You pressed Green')
+    }else if(blueTester.isButtonPressed()){
+      alert('You pressed Blue')
+    }
+
+}, false);
 
 
 function drawEverything(greenButtonOn:boolean, redButtonOn:boolean, blueButtonOn:boolean, yellowButtonOn:boolean){
   createSimonBase()
-  addNormalShadow()
   createCenter()
+  addNormalShadow()
   createSmallButton('#ff0', 365, 510)
   createSmallButton('#f00', 635, 510)
   createCountDisplay();
+  endShadow()
   createButton(PI, PI2DIV, yellowConfig, yellowButtonOn)
   createButton(PI2DIV, PI2, blueConfig, blueButtonOn)
   createButton(PI2, PI1ANDHALF, redConfig, redButtonOn)
@@ -129,4 +188,8 @@ function createButton(radian1:number, radian2:number, colorConfig:ColorConfig, l
 function addNormalShadow(){
   ctx.shadowColor = 'rgba(0,0,0,0.5)'
   ctx.shadowBlur = 20
+}
+
+function endShadow(){
+  ctx.shadowBlur = 0
 }

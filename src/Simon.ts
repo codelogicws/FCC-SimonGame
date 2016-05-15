@@ -1,5 +1,5 @@
 ///<reference path='../typings/browser/definitions/lodash/index.d.ts'/>
-///<reference path='../Draw.ts/>
+///<reference path='Draw.ts/>
 
 let comboMemory:BUTTONCOLOR[] = [];
 let userIndex:number = 0;
