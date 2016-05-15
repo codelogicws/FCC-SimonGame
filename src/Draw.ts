@@ -15,11 +15,15 @@ console.log("loaded draw")
 
   createSimonBase()
   createCenter()
-  createButton(PI, PI2DIV, '#777700');
-  createButton(PI2DIV, PI2, '#000077');
-  createButton(PI2, PI1ANDHALF, '#770000');
-  createButton(PI1ANDHALF, PI, '#007700')
+  createButton(PI, PI2DIV, '#888800');
+  createButton(PI2DIV, PI2, '#000088');
+  createButton(PI2, PI1ANDHALF, '#880000');
+  createButton(PI1ANDHALF, PI, '#008800')
 
+
+  ctx.fillStyle = "black"
+  ctx.font = "100px Patua One";
+  ctx.fillText("Simon", 370, 420)
 
   console.log("loaded draw")
 
@@ -33,7 +37,7 @@ console.log("loaded draw")
   function createSimonBase(){
     ctx.fillStyle = '#111'
     ctx.beginPath()
-    ctx.arc(500, 500, 500, 0, PI2, false);
+    ctx.arc(500, 500, 495, 0, PI2, false);
     ctx.fill()
   }
 
