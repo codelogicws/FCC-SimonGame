@@ -72,8 +72,6 @@ function playColor(color:BUTTONCOLOR){
          yellowSound.play()
          lightButton(0,0,0,1)
          break;
-      default:
-       alert('ALL YOUR BASE ARE BELONG TO US!!!')
     }
   console.log(BUTTONCOLOR[color]);
 }
@@ -91,6 +89,7 @@ function switchTurn(){
 
 function pressColor(color:BUTTONCOLOR){
   if(userTurn){
+    playColor(color);
     if(color == comboMemory[userIndex]){
       userIndex++;
       checkIfTurn()

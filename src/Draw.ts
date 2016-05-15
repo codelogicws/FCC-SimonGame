@@ -38,43 +38,42 @@ class ColorConfig{
 
 
 class ButtonClickTester{
-  private cornerCutOff = 255
+  private cornerCutOff = 240
   private xCutOff:number
   private yCutOff:number
-  private fullEnd = c.width/2
-  private expectedX:number
-  private expectedY:number
+  private fullEnd:number
   private x:number
   private y:number
+  private yFlip:boolean
+  private xFlip:boolean
 
-  public constructor(x:number, y:number, xFlip:boolean, yFlip:boolean){
+  public constructor(x:number, y:number, xFlip:boolean, yFlip:boolean, canvasXandYLength:number){
     this.x = x
     this.y = y
-    this.expectedX = (y >= this.cornerCutOff)? this.fullEnd - (y-this.cornerCutOff) : this.fullEnd
-    this.expectedY = (x >= this.cornerCutOff)? this.fullEnd - (x-this.cornerCutOff) : this.fullEnd
+    this.yFlip = yFlip
+    this.xFlip = xFlip
+    this.fullEnd = canvasXandYLength/2;
+    this.xCutOff = (xFlip)? (canvasXandYLength - this.cornerCutOff) : this.cornerCutOff;
+    this.yCutOff = (yFlip)? (canvasXandYLength - this.cornerCutOff) : this.cornerCutOff;
   }
 
   public isButtonPressed(){
-    return (this.x < this.expectedX && this.y < this.expectedY)
+    let xExpect:number = (this.xFlip)? this.expectAxisFlipped(this.x, true) : this.expectAxis(this.x, true)
+    let yExpect:number = (this.yFlip)? this.expectAxisFlipped(this.y, false) : this.expectAxis(this.y, false)
+    let xOk:boolean = (this.xFlip)? this.x > xExpect : this.x < xExpect
+    let yOk:boolean = (this.yFlip)? this.y > yExpect : this.y < yExpect
+    return yOk && xOk
   }
 
-    // function isLightPressed(x:number, y:number, xFlip:boolean, yFlip:boolean){
-    //   let cornerCutOff = 225;
-    //   let xCutOff:number = (xFlip)? (c.width - cornerCutOff) : cornerCutOff
-    //   let yCutOff:number = (yFlip)? (c.height - cornerCutOff): cornerCutOff
-    //   let fullEnd:number = c.width/2
-    //   let exprectedX = (xFlip)? cornerExpectAxisFlipped(cornerCutOff, fullEnd, y): cornerExpectAxis(cornerCutOff, fullEnd, y)
-    //   let exprectedY = (xFlip)? cornerExpectAxisFlipped(cornerCutOff, fullEnd, x): cornerExpectAxis(cornerCutOff, fullEnd, x)
-    // }
-    //
-    // function cornerExpectAxis(cornerCutOff:number, fullLength:number, XorY:number){
-    //   return (XorY >= cornerCutOff)? fullLength - (XorY-cornerCutOff) : fullLength
-    // }
-    //
-    // //TODO Needs work
-    // function cornerExpectAxisFlipped(cornerCutOff:number, fullLength:number, XorY:number){
-    //   return (XorY >= cornerCutOff)? fullLength - (XorY-cornerCutOff) : fullLength
-    // }
+  private expectAxis(XorY:number, isXAxis:boolean):number{
+    let cutOff:number = (isXAxis)? this.xCutOff : this.yCutOff
+    return (XorY >= cutOff)? this.fullEnd - (XorY-cutOff) : this.fullEnd
+  }
+
+  private expectAxisFlipped(XorY:number, isXAxis:boolean):number{
+    let cutOff:number = (isXAxis)? this.xCutOff : this.yCutOff
+    return (XorY <= cutOff)? this.fullEnd + (cutOff-XorY) : this.fullEnd
+  }
 }
 
 const PI = Math.PI
@@ -102,13 +101,19 @@ c.addEventListener('click', function(event) {
     let x = 1000 * ((event.pageX-elemLeft)/c.offsetWidth)
     let y = 1000 * ((event.pageY-elemTop)/c.offsetHeight)
 
-    let greenTester:ButtonClickTester = new ButtonClickTester(x, y, false, false);
-    let blueTester:ButtonClickTester = new ButtonClickTester(x, y, true, true);
+    let greenTester:ButtonClickTester =  new ButtonClickTester(x, y, false, false, c.width);
+    let blueTester:ButtonClickTester =   new ButtonClickTester(x, y, true,   true, c.width);
+    let redTester:ButtonClickTester =    new ButtonClickTester(x, y, true,  false, c.width);
+    let yellowTester:ButtonClickTester = new ButtonClickTester(x, y, false,  true, c.width);
 
     if(greenTester.isButtonPressed()){
-      alert('You pressed Green')
+      pressColor(BUTTONCOLOR.GREEN);
     }else if(blueTester.isButtonPressed()){
-      alert('You pressed Blue')
+      pressColor(BUTTONCOLOR.BLUE);
+    }else if(redTester.isButtonPressed()){
+      pressColor(BUTTONCOLOR.RED);
+    }else if(yellowTester.isButtonPressed()){
+      pressColor(BUTTONCOLOR.YELLOW);
     }
 
 }, false);
