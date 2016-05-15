@@ -1,6 +1,41 @@
 /// <reference path='../typings/jquery/jquery.d.ts'/>
 /// <reference path='../typings/browser/definitions/lodash/index.d.ts'/>
 
+
+
+class ColorConfig{
+  onLight:string;
+  onDark:string;
+  offLight:string;
+  offDark:string;
+
+  constructor(redOn:boolean, greenOn:boolean, blueOn:boolean){
+    this.onLight = this.getColorString(redOn, greenOn, blueOn, COLORON)
+    this.onDark  = this.getColorString(redOn, greenOn, blueOn, COLORONDARK)
+    this.offLight = this.getColorString(redOn, greenOn, blueOn, COLOROFF)
+    this.offDark = this.getColorString(redOn, greenOn, blueOn, COLOROFFDARK)
+  }
+
+  public getLight(lightOn:boolean){
+    return (lightOn)? this.onLight : this.offLight
+  }
+
+  public getDark(lightOn:boolean){
+    return (lightOn)? this.onDark : this.offDark
+  }
+
+  private getColorString(redOn:boolean, greenOn:boolean, blueOn:boolean, colorNumber:number):string{
+    return 'rgb(' +
+      ((redOn)? colorNumber: 0).toString() +
+      ', ' +
+      ((greenOn)? colorNumber: 0).toString() +
+      ', ' +
+      ((blueOn)? colorNumber: 0).toString() +
+      ')';
+  }
+
+}
+
 const PI = Math.PI
 const PI2DIV = Math.PI/2
 const PI2 = Math.PI*2
@@ -10,6 +45,10 @@ const COLOROFF = 180
 const COLOROFFDARK = 90
 const COLORON = 230
 const COLORONDARK = 180
+const blueConfig:ColorConfig = new ColorConfig(false, false, true);
+const redConfig:ColorConfig = new ColorConfig(true, false, false);
+const yellowConfig:ColorConfig = new ColorConfig(true, true, false);
+const greenConfig:ColorConfig = new ColorConfig(false, true, false);
 
 
 var c = <HTMLCanvasElement> $('#myCanvas')[0]
@@ -24,10 +63,10 @@ function drawEverything(greenButtonOn:boolean, redButtonOn:boolean, blueButtonOn
   createSmallButton('#ff0', 365, 510)
   createSmallButton('#f00', 635, 510)
   createCountDisplay();
-  createButton(PI, PI2DIV, true, true, false, yellowButtonOn)
-  createButton(PI2DIV, PI2, false,false,true, blueButtonOn)
-  createButton(PI2, PI1ANDHALF, true,false,false, redButtonOn)
-  createButton(PI1ANDHALF, PI, false,true,false, greenButtonOn)
+  createButton(PI, PI2DIV, yellowConfig, yellowButtonOn)
+  createButton(PI2DIV, PI2, blueConfig, blueButtonOn)
+  createButton(PI2, PI1ANDHALF, redConfig, redButtonOn)
+  createButton(PI1ANDHALF, PI, greenConfig, greenButtonOn)
 
 
   ctx.fillStyle = "black"
@@ -71,12 +110,12 @@ function createSimonBase(){
   ctx.fill()
 }
 
-function createButton(radian1:number, radian2:number, redOn:boolean, greenOn:boolean, blueOn:boolean, lightOn:boolean){
+function createButton(radian1:number, radian2:number, colorConfig:ColorConfig, lightOn:boolean){
   ctx.beginPath()
   //gradient
   var my_gradient=ctx.createLinearGradient(0,0,800,800);
-  my_gradient.addColorStop(0,getLightColor(COLORON, COLOROFF, redOn, greenOn, blueOn, lightOn ));
-  my_gradient.addColorStop(1,getLightColor(COLORONDARK, COLOROFFDARK, redOn, greenOn, blueOn, lightOn ));
+  my_gradient.addColorStop(0, colorConfig.getLight(lightOn));
+  my_gradient.addColorStop(1, colorConfig.getDark(lightOn));
   ctx.fillStyle=my_gradient;
   //-----
   let innerRadius = 250
@@ -89,25 +128,4 @@ function createButton(radian1:number, radian2:number, redOn:boolean, greenOn:boo
 function addNormalShadow(){
   ctx.shadowColor = 'rgba(0,0,0,0.5)'
   ctx.shadowBlur = 20
-}
-
-function getLightColor(onNumber:number, offNumber:number, redOn:boolean, greenOn:boolean, blueOn:boolean, lightOn:boolean){
-  return 'rgb(' +
-    ((redOn)? getColor(onNumber, offNumber, lightOn) : 0).toString() +
-    ',' +
-    ((greenOn)? getColor(onNumber, offNumber, lightOn): 0).toString() +
-    ',' +
-    ((blueOn)? getColor(onNumber, offNumber, lightOn): 0).toString() +
-    ')';
-}
-
-function getColor(onNumber:number, offNumber:number,lightOn:boolean){
-  return (lightOn)? onNumber : offNumber;
-}
-
-class ColorConfig{
-  constructor(redOn:boolean, greenOn:boolean, blueOn:boolean){
-    //Light On
-  }
-
 }
