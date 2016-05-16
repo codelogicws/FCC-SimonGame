@@ -5,7 +5,7 @@ let comboMemory:BUTTONCOLOR[] = [];
 let userIndex:number = 0;
 let playbackID:number;
 let userTurn:boolean = false;
-let strictMode:boolean = false;
+let strictMode:boolean = true;
 let blueSound = new Audio("https://s3.amazonaws.com/freecodecamp/simonSound1.mp3");
 let greenSound = new Audio("https://s3.amazonaws.com/freecodecamp/simonSound2.mp3");
 let redSound = new Audio("https://s3.amazonaws.com/freecodecamp/simonSound3.mp3");
@@ -22,6 +22,7 @@ function computersTurnNewColor(){
 }
 
 function computersTurn(){
+  //add delay here
   userTurn = false;
   userIndex = 0;
   playColors();
@@ -37,12 +38,13 @@ function getCombo(){
 
 function newColor(){
    let random:number = Math.floor(   Math.random() * (4 - 0) + 0)
-   console.log(random + ' this is the random number');
    comboMemory.push(random)
 }
 
 function playColors(){
-   playbackID = window.setInterval(playNextNumber, 1000)
+  window.setTimeout(()=>{
+   playbackID = window.setInterval(playNextNumber, 1000 - (20*comboMemory.length))
+  }, 500)
 }
 
 function playNextNumber(){
@@ -73,13 +75,12 @@ function playColor(color:BUTTONCOLOR){
          lightButton(0,0,0,1)
          break;
     }
-  console.log(BUTTONCOLOR[color]);
 }
 
 function lightButton(g, r, b, y){
-  drawEverything(g, r, b ,y)
+  drawEverything(g, r, b ,y, (comboMemory.length).toString())
   window.setTimeout(()=>{
-    drawEverything(0,0,0,0)
+    drawEverything(0,0,0,0,(comboMemory.length).toString())
   }, 350)
 }
 
@@ -96,6 +97,8 @@ function pressColor(color:BUTTONCOLOR){
     }else{
       loseGame();
     }
+  }else{
+    console.log(BUTTONCOLOR[color] + ' was pressed when its not the uses turn')
   }
 }
 
@@ -104,7 +107,6 @@ function checkIfTurn(){
     if (userIndex == 20){
       alert("Good Job! You Win!")
     } else{
-      alert("your turn is over")
       computersTurnNewColor()
     }
   }
@@ -117,7 +119,6 @@ function loseGame(){
     comboMemory = []
     computersTurnNewColor()
   }else{
-    alert('retry');
     computersTurn()
   }
 }

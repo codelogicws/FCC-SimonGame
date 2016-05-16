@@ -58,20 +58,39 @@ class ButtonClickTester{
   }
 
   public isButtonPressed(){
-    let xExpect:number = (this.xFlip)? this.expectAxisFlipped(this.x, true) : this.expectAxis(this.x, true)
-    let yExpect:number = (this.yFlip)? this.expectAxisFlipped(this.y, false) : this.expectAxis(this.y, false)
+    let xExpect:number = (this.xFlip)? this.expectAxisFlipped(true) : this.expectAxis(true)
+    let yExpect:number = (this.yFlip)? this.expectAxisFlipped(false) : this.expectAxis(false)
+    console.log(this.x, " ", this.y)
+    console.log('expect x: ' + xExpect + ' y: ' + yExpect)
     let xOk:boolean = (this.xFlip)? this.x > xExpect : this.x < xExpect
     let yOk:boolean = (this.yFlip)? this.y > yExpect : this.y < yExpect
     return yOk && xOk
   }
 
-  private expectAxis(XorY:number, isXAxis:boolean):number{
-    let cutOff:number = (isXAxis)? this.xCutOff : this.yCutOff
+  private expectAxis(isXAxis:boolean):number{
+    let cutOff:number;
+    let XorY: number;
+    if(isXAxis){
+      cutOff = this.yCutOff
+      XorY = this.y
+    }else {
+      cutOff = this.xCutOff
+      XorY = this.x
+    }
+    console.log(cutOff + "isXAxis " + isXAxis + 'xCutOff ' );
     return (XorY >= cutOff)? this.fullEnd - (XorY-cutOff) : this.fullEnd
   }
 
-  private expectAxisFlipped(XorY:number, isXAxis:boolean):number{
-    let cutOff:number = (isXAxis)? this.xCutOff : this.yCutOff
+  private expectAxisFlipped(isXAxis:boolean):number{
+    let cutOff:number;
+    let XorY: number;
+    if(isXAxis){
+      cutOff = this.yCutOff
+      XorY = this.y
+    }else {
+      cutOff = this.xCutOff
+      XorY = this.x
+    }
     return (XorY <= cutOff)? this.fullEnd + (cutOff-XorY) : this.fullEnd
   }
 }
@@ -107,25 +126,47 @@ c.addEventListener('click', function(event) {
     let yellowTester:ButtonClickTester = new ButtonClickTester(x, y, false,  true, c.width);
 
     if(greenTester.isButtonPressed()){
-      pressColor(BUTTONCOLOR.GREEN);
+      // pressColor(BUTTONCOLOR.GREEN);
+      console.log('green');
     }else if(blueTester.isButtonPressed()){
-      pressColor(BUTTONCOLOR.BLUE);
+      // pressColor(BUTTONCOLOR.BLUE);
+      console.log('blue');
     }else if(redTester.isButtonPressed()){
-      pressColor(BUTTONCOLOR.RED);
+      // pressColor(BUTTONCOLOR.RED);
+      console.log('red');
     }else if(yellowTester.isButtonPressed()){
-      pressColor(BUTTONCOLOR.YELLOW);
+      // pressColor(BUTTONCOLOR.YELLOW);
+      console.log('yellow');
+    }else if(startButtonPressed(x, y)){
+      gameStart();
+      console.log('pressed start')
+    }else if(strictButtonPressed(x, y)){
+      strictMode = !strictMode
+      console.log('pressed strict')
     }
 
 }, false);
 
+function startButtonPressed(x:number, y:number){
+  return smallButtonTestAt(x, y, 365, 510)
+}
 
-function drawEverything(greenButtonOn:boolean, redButtonOn:boolean, blueButtonOn:boolean, yellowButtonOn:boolean){
+function strictButtonPressed(x:number, y:number){
+  return smallButtonTestAt(x, y, 635, 510)
+}
+
+function smallButtonTestAt(x:number, y:number, buttonX:number, buttonY:number){
+  let offset = 35;
+  return x > buttonX-offset && x < buttonX+offset && y > buttonY-offset && y < buttonX+offset
+}
+
+function drawEverything(greenButtonOn:boolean, redButtonOn:boolean, blueButtonOn:boolean, yellowButtonOn:boolean, count:string = "0"){
   createSimonBase()
   createCenter()
   addNormalShadow()
   createSmallButton('#ff0', 365, 510)
   createSmallButton('#f00', 635, 510)
-  createCountDisplay();
+  createCountDisplay(count);
   endShadow()
   createButton(PI, PI2DIV, yellowConfig, yellowButtonOn)
   createButton(PI2DIV, PI2, blueConfig, blueButtonOn)
@@ -140,11 +181,19 @@ function drawEverything(greenButtonOn:boolean, redButtonOn:boolean, blueButtonOn
 }
 
 
-function createCountDisplay(){
+function createCountDisplay(count:string){
   ctx.fillStyle = '#300'
   ctx.beginPath()
   ctx.rect(430, 450, 140, 120)
   ctx.fill();
+  ctx.beginPath()
+  ctx.fillStyle = '#800'
+  ctx.font = "50px Patua One"
+  ctx.fillText(makeDoubleDig(count), 475, 525)
+}
+
+function makeDoubleDig(x:string){
+  return (x.length > 1)? x : '0' + x
 }
 
 function createSmallButton(color:string, x:number, y:number){
