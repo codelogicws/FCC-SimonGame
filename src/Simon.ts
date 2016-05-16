@@ -13,7 +13,15 @@ let yellowSound = new Audio("https://s3.amazonaws.com/freecodecamp/simonSound4.m
 let errorSound = new Audio('http://www.freesfx.co.uk/rx2/mp3s/9/11111_1393961399.mp3');
 
 function gameStart(){
+  drawScreen()
+  comboMemory = [];
+  window.clearInterval(playbackID)
   computersTurnNewColor()
+}
+
+function toggleStrict(){
+  strictMode = !strictMode
+  drawScreen()
 }
 
 function computersTurnNewColor(){
@@ -78,10 +86,14 @@ function playColor(color:BUTTONCOLOR){
 }
 
 function lightButton(g, r, b, y){
-  drawEverything(g, r, b ,y, (comboMemory.length).toString())
+  drawScreen(g, r, b, y)
   window.setTimeout(()=>{
-    drawEverything(0,0,0,0,(comboMemory.length).toString())
+    drawScreen()
   }, 350)
+}
+
+function drawScreen(g=false, r=false, b=false, y=false){
+  drawEverything(g,r,b,y, (comboMemory.length).toString(), strictMode)
 }
 
 function switchTurn(){
@@ -106,6 +118,7 @@ function checkIfTurn(){
   if(switchTurn()){
     if (userIndex == 20){
       alert("Good Job! You Win!")
+      gameStart()
     } else{
       computersTurnNewColor()
     }

@@ -36,12 +36,22 @@ class ColorConfig{
 
 }
 
+class ExpectedAxis{
+  shouldBeGreaterThen:boolean
+  value:number
+
+  public test(x:number){
+    if(this.shouldBeGreaterThen)
+      return x >= this.value
+    return x <= this.value
+  }
+}
+
 
 class ButtonClickTester{
   private cornerCutOff = 240
-  private xCutOff:number
-  private yCutOff:number
-  private fullEnd:number
+  private cornerCutOffInverse:number
+  private center:number
   private x:number
   private y:number
   private yFlip:boolean
@@ -52,47 +62,26 @@ class ButtonClickTester{
     this.y = y
     this.yFlip = yFlip
     this.xFlip = xFlip
-    this.fullEnd = canvasXandYLength/2;
-    this.xCutOff = (xFlip)? (canvasXandYLength - this.cornerCutOff) : this.cornerCutOff;
-    this.yCutOff = (yFlip)? (canvasXandYLength - this.cornerCutOff) : this.cornerCutOff;
+    this.center = canvasXandYLength/2;
+    this.cornerCutOffInverse = this.center + this.cornerCutOff
   }
 
   public isButtonPressed(){
-    let xExpect:number = (this.xFlip)? this.expectAxisFlipped(true) : this.expectAxis(true)
-    let yExpect:number = (this.yFlip)? this.expectAxisFlipped(false) : this.expectAxis(false)
-    console.log(this.x, " ", this.y)
-    console.log('expect x: ' + xExpect + ' y: ' + yExpect)
-    let xOk:boolean = (this.xFlip)? this.x > xExpect : this.x < xExpect
-    let yOk:boolean = (this.yFlip)? this.y > yExpect : this.y < yExpect
-    return yOk && xOk
+    let xDiff:number = (this.yFlip)? this.cornerCutOffInverse - this.y : this.y - this.cornerCutOff
+    let yDiff = (this.xFlip)? this.cornerCutOffInverse - this.x : this.x - this.cornerCutOff
+
+    let xAwayFromCenter:number = (this.xFlip)? this.x - this.center : this.center - this.x
+    let xAngleOk:boolean = xAwayFromCenter > xDiff
+
+    let yAwayFromCenter:number = (this.yFlip)? this.y - this.center : this.center - this.y
+    let yAngleOk:boolean = yAwayFromCenter > yDiff
+
+    let ySquareOk = (this.yFlip)? this.y > this.center : this.y < this.center
+    let xSqaureOk = (this.xFlip)? this.x > this.center : this.x < this.center
+
+    return xAngleOk && xSqaureOk && yAngleOk && ySquareOk
   }
 
-  private expectAxis(isXAxis:boolean):number{
-    let cutOff:number;
-    let XorY: number;
-    if(isXAxis){
-      cutOff = this.yCutOff
-      XorY = this.y
-    }else {
-      cutOff = this.xCutOff
-      XorY = this.x
-    }
-    console.log(cutOff + "isXAxis " + isXAxis + 'xCutOff ' );
-    return (XorY >= cutOff)? this.fullEnd - (XorY-cutOff) : this.fullEnd
-  }
-
-  private expectAxisFlipped(isXAxis:boolean):number{
-    let cutOff:number;
-    let XorY: number;
-    if(isXAxis){
-      cutOff = this.yCutOff
-      XorY = this.y
-    }else {
-      cutOff = this.xCutOff
-      XorY = this.x
-    }
-    return (XorY <= cutOff)? this.fullEnd + (cutOff-XorY) : this.fullEnd
-  }
 }
 
 const PI = Math.PI
@@ -126,22 +115,18 @@ c.addEventListener('click', function(event) {
     let yellowTester:ButtonClickTester = new ButtonClickTester(x, y, false,  true, c.width);
 
     if(greenTester.isButtonPressed()){
-      // pressColor(BUTTONCOLOR.GREEN);
-      console.log('green');
+      pressColor(BUTTONCOLOR.GREEN);
     }else if(blueTester.isButtonPressed()){
-      // pressColor(BUTTONCOLOR.BLUE);
-      console.log('blue');
+      pressColor(BUTTONCOLOR.BLUE);
     }else if(redTester.isButtonPressed()){
-      // pressColor(BUTTONCOLOR.RED);
-      console.log('red');
+      pressColor(BUTTONCOLOR.RED);
     }else if(yellowTester.isButtonPressed()){
-      // pressColor(BUTTONCOLOR.YELLOW);
-      console.log('yellow');
+      pressColor(BUTTONCOLOR.YELLOW);
     }else if(startButtonPressed(x, y)){
       gameStart();
       console.log('pressed start')
     }else if(strictButtonPressed(x, y)){
-      strictMode = !strictMode
+      toggleStrict()
       console.log('pressed strict')
     }
 
@@ -156,17 +141,17 @@ function strictButtonPressed(x:number, y:number){
 }
 
 function smallButtonTestAt(x:number, y:number, buttonX:number, buttonY:number){
-  let offset = 35;
-  return x > buttonX-offset && x < buttonX+offset && y > buttonY-offset && y < buttonX+offset
+  let offset = 70;
+  return x > buttonX - (offset/2) && x < buttonX + (offset/2) && y > buttonY - (offset/2) && y < buttonY + (offset/2)
 }
 
-function drawEverything(greenButtonOn:boolean, redButtonOn:boolean, blueButtonOn:boolean, yellowButtonOn:boolean, count:string = "0"){
+function drawEverything(greenButtonOn:boolean, redButtonOn:boolean, blueButtonOn:boolean, yellowButtonOn:boolean, count:string = "0", strictModeOn:boolean){
   createSimonBase()
   createCenter()
   addNormalShadow()
   createSmallButton('#ff0', 365, 510)
   createSmallButton('#f00', 635, 510)
-  createCountDisplay(count);
+  createCountDisplay(count, strictModeOn);
   endShadow()
   createButton(PI, PI2DIV, yellowConfig, yellowButtonOn)
   createButton(PI2DIV, PI2, blueConfig, blueButtonOn)
@@ -181,7 +166,7 @@ function drawEverything(greenButtonOn:boolean, redButtonOn:boolean, blueButtonOn
 }
 
 
-function createCountDisplay(count:string){
+function createCountDisplay(count:string, strict:boolean){
   ctx.fillStyle = '#300'
   ctx.beginPath()
   ctx.rect(430, 450, 140, 120)
@@ -190,6 +175,15 @@ function createCountDisplay(count:string){
   ctx.fillStyle = '#800'
   ctx.font = "50px Patua One"
   ctx.fillText(makeDoubleDig(count), 475, 525)
+  ctx.fillStyle = '#222'
+  ctx.font = "20px Patua One"
+  ctx.fillText('Start', 344, 570)
+  ctx.fillText('Strict', 612.5, 570)
+  if(strict){
+    ctx.fillStyle = '#800'
+    ctx.font = "33px Patua One"
+    ctx.fillText('STRICT MODE', 400, 645)
+  }
 }
 
 function makeDoubleDig(x:string){
