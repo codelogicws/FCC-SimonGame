@@ -10,7 +10,10 @@ let blueSound = new Audio("https://s3.amazonaws.com/freecodecamp/simonSound1.mp3
 let greenSound = new Audio("https://s3.amazonaws.com/freecodecamp/simonSound2.mp3");
 let redSound = new Audio("https://s3.amazonaws.com/freecodecamp/simonSound3.mp3");
 let yellowSound = new Audio("https://s3.amazonaws.com/freecodecamp/simonSound4.mp3");
+// these sounds provided by http://www.freesfx.co.uk --------------------
 let errorSound = new Audio('http://www.freesfx.co.uk/rx2/mp3s/9/11111_1393961399.mp3');
+let toggleSwitch = new Audio('http://www.shneek.com/codepen/sounds/toggle_switch.mp3');
+//-----------------------------------------------------------------------
 
 function gameStart(){
   drawScreen()

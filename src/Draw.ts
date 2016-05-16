@@ -103,6 +103,7 @@ var c = <HTMLCanvasElement> $('#myCanvas')[0]
 var ctx = c.getContext("2d")
 let elemLeft = c.offsetLeft
 let elemTop = c.offsetTop
+let canUseGameStartButton = true;
 
 c.addEventListener('click', function(event) {
     let x = 1000 * ((event.pageX-elemLeft)/c.offsetWidth)
@@ -122,9 +123,17 @@ c.addEventListener('click', function(event) {
     }else if(yellowTester.isButtonPressed()){
       pressColor(BUTTONCOLOR.YELLOW);
     }else if(startButtonPressed(x, y)){
-      gameStart();
+      if(canUseGameStartButton){
+        toggleSwitch.play()
+        canUseGameStartButton = false;
+        gameStart();
+        gameStartRequestId = window.setTimeout(()=>{canUseGameStartButton = true}, 3000)
+      }else{
+        errorSound.play()
+      }
       console.log('pressed start')
     }else if(strictButtonPressed(x, y)){
+      toggleSwitch.play()
       toggleStrict()
       console.log('pressed strict')
     }
