@@ -110,14 +110,13 @@ function pressColor(color:BUTTONCOLOR){
       loseGame();
     }
   }else{
-    console.log(BUTTONCOLOR[color] + ' was pressed when its not the uses turn')
+    console.log(BUTTONCOLOR[color] + ' was pressed when its not the users turn')
   }
 }
 
 function checkIfTurn(){
   if(switchTurn()){
     if (userIndex == 20){
-      alert("Good Job! You Win!")
       gameStart()
     } else{
       computersTurnNewColor()
@@ -128,7 +127,6 @@ function checkIfTurn(){
 function loseGame(){
   errorSound.play();
   if(strictMode){
-    alert('Game Over You Lose')
     comboMemory = []
     computersTurnNewColor()
   }else{

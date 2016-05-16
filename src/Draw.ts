@@ -103,7 +103,6 @@ var c = <HTMLCanvasElement> $('#myCanvas')[0]
 var ctx = c.getContext("2d")
 let elemLeft = c.offsetLeft
 let elemTop = c.offsetTop
-drawEverything(false, false, false, false);
 
 c.addEventListener('click', function(event) {
     let x = 1000 * ((event.pageX-elemLeft)/c.offsetWidth)
