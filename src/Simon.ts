@@ -120,6 +120,7 @@ function pressColor(color:BUTTONCOLOR){
 function checkIfTurn(){
   if(switchTurn()){
     if (userIndex == 20){
+      alert('YOU WON!!!')
       gameStart()
     } else{
       computersTurnNewColor()

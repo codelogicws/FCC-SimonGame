@@ -99,7 +99,7 @@ const yellowConfig:ColorConfig = new ColorConfig(true, true, false);
 const greenConfig:ColorConfig = new ColorConfig(false, true, false);
 
 
-var c = <HTMLCanvasElement> $('#myCanvas')[0]
+var c = <HTMLCanvasElement> document.getElementById('myCanvas')
 var ctx = c.getContext("2d")
 let elemLeft = c.offsetLeft
 let elemTop = c.offsetTop
@@ -127,7 +127,7 @@ c.addEventListener('click', function(event) {
         toggleSwitch.play()
         canUseGameStartButton = false;
         gameStart();
-        gameStartRequestId = window.setTimeout(()=>{canUseGameStartButton = true}, 3000)
+        window.setTimeout(()=>{canUseGameStartButton = true}, 3000)
       }else{
         errorSound.play()
       }
